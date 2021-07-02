@@ -6,6 +6,7 @@
 
 <script>
 import { post } from 'axios';
+//import { HmacSHA256, sha256,  } from 'cryptojs';
 
 export default {
     name: 'Home',
@@ -13,17 +14,16 @@ export default {
         amazonCheckoutSessionId: null,
         innerUrl: 'http://localhost:3001'
     }),
+    methods: {
+
+    },
     async beforeMount() {
         this.amazonCheckoutSessionId = this.$route.query.amazonCheckoutSessionId;
         console.log(this.amazonCheckoutSessionId);
-        console.log(await post(`https://pay-api.amazon.com/v2/checkoutSessions/${ this.amazonCheckoutSessionId }/complete`, {
-            "chargeAmount": {
-                "amount": "14.00",
-                "currencyCode": "USD"
-            }
-        }));
+
     }
 }
 </script>
 
 <style lang="scss"></style>
+
