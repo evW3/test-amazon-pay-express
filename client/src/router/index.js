@@ -13,8 +13,13 @@ const router = createRouter({
         },
         {
             path: '/accepted-pay',
-            name: 'Accepted-pay',
-            component: () => import('../views/AcceptedPay.vue')
+            name: 'Checkout',
+            component: () => import('../views/Checkout.vue')
+        },
+        {
+            path: '/merchant-confirm-page',
+            name: 'MerchantConfirmPage',
+            component: () => import('../views/MerchantConfirmPage.vue')
         }
     ]
 });
