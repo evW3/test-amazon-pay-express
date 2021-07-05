@@ -5,10 +5,8 @@
       <br>
       <span>Currency code: {{this.checkout.paymentDetails.chargeAmount.currencyCode}}</span>
       <br>
-      <button @click="pay">Оплатить</button>
-      <br>
       <a v-if='url' :href='url'>
-          Click to confirm
+          Перейти к оплате
       </a>
   </div>
 </template>
@@ -28,11 +26,11 @@ export default {
     methods: {
         async pay() {
             await post(`${this.innerUrl}/checkout/${this.amazonCheckoutSessionId}`, { payload: { chargeAmount: this.checkout.paymentDetails.chargeAmount } });
-        }, 
+        },
         createPayloadWithAmount(amount, currencyCode) {
             return {
                 webCheckoutDetails: {
-                    checkoutResultReturnUrl: 'http://localhost/merchant-confirm-page'
+                    checkoutResultReturnUrl: 'http://localhost:3002/merchant-confirm-page'
                 },
                 paymentDetails: {
                     paymentIntent: 'Confirm',
@@ -55,11 +53,9 @@ export default {
         this.amazonCheckoutSessionId = this.$route.query.amazonCheckoutSessionId;
         this.checkout = { ...(await get(`${ this.innerUrl }/checkout/${ this.amazonCheckoutSessionId }`)).data };
         this.checkout = { ...(await patch(`${this.innerUrl}/checkout/${ this.checkout.checkoutSessionId }`, { payload: this.createPayloadWithAmount('50', 'USD') })).data };
-        console.log(this.checkout);
         this.url = this.checkout.webCheckoutDetails.amazonPayRedirectUrl;
     }
 }
 </script>
 
 <style lang="scss"></style>
-

@@ -64,13 +64,12 @@ app.patch(`/checkout/:id`, async (req, res) => {
 });
 
 app.post('/checkout/:id', async (req, res) => {
-    try {
+    try {        
         const payload = req.body.payload;
         const amazonCheckoutSessionId = req.params.id;
-        console.log(payload);
-        console.log(amazonCheckoutSessionId);
         const tmp = await testWebClient.completeCheckoutSession(amazonCheckoutSessionId, payload);
         console.log(tmp);
+        res.status(200).json({ message: 'Session was completed' });
     } catch(e) {
         console.log(e);
     }
