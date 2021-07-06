@@ -12,25 +12,24 @@
 </template>
 
 <script>
-import { get, patch, post } from 'axios';
-import { v4 } from 'uuid';
+import { get, post } from 'axios';
+import { API_URL } from "../constants";
 
 export default {
     name: 'Home',
     data: () => ({
         amazonCheckoutSessionId: null,
-        innerUrl: 'http://localhost:3001',
         checkout: null,
         message: null
     }),
     methods: {
         async pay() {
-            this.message = (await post(`${this.innerUrl}/checkout/${this.amazonCheckoutSessionId}`, { payload: { chargeAmount: this.checkout.paymentDetails.chargeAmount } })).data.message;
+            this.message = (await post(`${API_URL}/checkout/${this.amazonCheckoutSessionId}`, { payload: { chargeAmount: this.checkout.paymentDetails.chargeAmount } })).data.message;
         }
     },
     async beforeMount() {
       this.amazonCheckoutSessionId = this.$route.query.amazonCheckoutSessionId;
-      this.checkout = { ...(await get(`${ this.innerUrl }/checkout/${ this.amazonCheckoutSessionId }`)).data };
+      this.checkout = { ...(await get(`${API_URL}/checkout/${ this.amazonCheckoutSessionId }`)).data };
     }
 }
 </script>

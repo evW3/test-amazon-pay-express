@@ -6,19 +6,19 @@
 </template>
 
 <script>
-import { get } from 'axios';
+import { get, post } from 'axios';
+import { API_URL, FRONT_URL } from "../constants";
 
 export default {
     name: 'Home',
     data: () => ({
-            innerUrl: 'http://localhost:3001',
             storeId: null,
             publicKey: null,
-            merchantId: null
+            merchantId: null,
+            payload: {}
         }),
     methods: {
-        async onSubmit() {  },
-        async setValues(objectWithParams) {
+        setValues(objectWithParams) {
 
             if(objectWithParams.data.storeId) {
                 this.storeId = objectWithParams.data.storeId;
@@ -34,18 +34,18 @@ export default {
         }
     },
     async beforeMount() {
-        const storeInfo = await get(`${ this.innerUrl}/store/info`);
-
-        const signature = (await get(`${ this.innerUrl}/store/signature`)).data.signature;
+        const storeInfo = await get(`${API_URL}/store/info`);
 
         this.setValues(storeInfo);
 
-        const payloadJSON = {
+        this.payload = {
             'webCheckoutDetails': {
-                'checkoutReviewReturnUrl': 'http://localhost:3002/accepted-pay'
+                'checkoutReviewReturnUrl': `${FRONT_URL()}/accepted-pay`
             },
             'storeId': this.storeId
         }
+
+        const signature = (await post(`${API_URL}/store/signature`, { payload: this.payload })).data.signature;
 
         amazon.Pay.renderButton('#AmazonPayButton', {
             merchantId: this.merchantId,
@@ -56,7 +56,7 @@ export default {
             placement: 'Cart',
             buttonColor: 'Gold',
             createCheckoutSessionConfig: {
-                payloadJSON: payloadJSON, 
+                payloadJSON: this.payload,
                 signature: signature
             }
         });

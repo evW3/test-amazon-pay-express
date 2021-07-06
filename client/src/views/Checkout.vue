@@ -14,23 +14,23 @@
 <script>
 import { get, patch, post } from 'axios';
 import { v4 } from 'uuid';
+import { API_URL, FRONT_URL } from "../constants";
 
 export default {
     name: 'Home',
     data: () => ({
         amazonCheckoutSessionId: null,
-        innerUrl: 'http://localhost:3001',
         checkout: null,
         url: null
     }),
     methods: {
         async pay() {
-            await post(`${this.innerUrl}/checkout/${this.amazonCheckoutSessionId}`, { payload: { chargeAmount: this.checkout.paymentDetails.chargeAmount } });
+            await post(`${API_URL}/checkout/${this.amazonCheckoutSessionId}`, { payload: { chargeAmount: this.checkout.paymentDetails.chargeAmount } });
         },
         createPayloadWithAmount(amount, currencyCode) {
             return {
                 webCheckoutDetails: {
-                    checkoutResultReturnUrl: 'http://localhost:3002/merchant-confirm-page'
+                    checkoutResultReturnUrl: `${FRONT_URL()}/merchant-confirm-page`
                 },
                 paymentDetails: {
                     paymentIntent: 'Confirm',
@@ -51,8 +51,8 @@ export default {
     },
     async beforeMount() {
         this.amazonCheckoutSessionId = this.$route.query.amazonCheckoutSessionId;
-        this.checkout = { ...(await get(`${ this.innerUrl }/checkout/${ this.amazonCheckoutSessionId }`)).data };
-        this.checkout = { ...(await patch(`${this.innerUrl}/checkout/${ this.checkout.checkoutSessionId }`, { payload: this.createPayloadWithAmount('50', 'USD') })).data };
+        this.checkout = { ...(await get(`${API_URL}/checkout/${ this.amazonCheckoutSessionId }`)).data };
+        this.checkout = { ...(await patch(`${API_URL}/checkout/${ this.checkout.checkoutSessionId }`, { payload: this.createPayloadWithAmount('50', 'USD') })).data };
         this.url = this.checkout.webCheckoutDetails.amazonPayRedirectUrl;
     }
 }
